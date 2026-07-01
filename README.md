@@ -40,10 +40,26 @@ This is not a replacement for human peer review and does not guarantee the paper
 
 **Submit a pull request to this repository** — do not send requests by email. All endorsement requests are handled publicly via pull requests for transparency: anyone can see what was submitted and what decision was made.
 
-To submit a request, open a pull request that adds a new file under `requests/` containing:
+To submit a request, open a pull request that adds exactly one new `.txt` file under `requests/`.
 
-1. Your verified LinkedIn profile URL
-2. A link to your paper (PDF or preprint URL)
-3. The arXiv subject area you intend to submit to
+Use this exact three-line format, with one field per line:
+
+```text
+LinkedIn: https://www.linkedin.com/in/your-profile
+Paper: https://example.org/your-paper.pdf
+Subject: cs.LG
+```
+
+Rules:
+
+1. The file must contain exactly these three fields, in this order: `LinkedIn`, `Paper`, `Subject`.
+2. Each field must appear exactly once, on a single line, as `Field: value`.
+3. `LinkedIn` must be an `https://www.linkedin.com/in/...` or `https://www.linkedin.com/pub/...` profile URL.
+4. `Paper` must be a public `https://` URL to the paper PDF or preprint page.
+5. `Subject` must be a valid arXiv category ID such as `cs.LG`, `stat.ML`, or `math.OC`.
+6. LinkedIn verification is still checked manually. The automated check only validates that the URL has the right shape.
+
+You can find the current arXiv category taxonomy here:
+https://arxiv.org/category_taxonomy
 
 I will run the AI review on my end and post my decision as a comment on the pull request.

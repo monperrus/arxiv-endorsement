@@ -1,0 +1,30 @@
+name: Validate Requests
+
+on:
+  pull_request:
+    paths:
+      - "requests/*.txt"
+      - "scripts/validate_request_files.py"
+      - ".github/workflows/validate-requests.yml"
+      - "README.md"
+  push:
+    paths:
+      - "requests/*.txt"
+      - "scripts/validate_request_files.py"
+      - ".github/workflows/validate-requests.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate request files
+        run: python scripts/validate_request_files.py
