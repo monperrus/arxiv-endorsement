@@ -1,0 +1,4 @@
+LinkedIn: https://www.linkedin.com/in/achintmehta
+Paper: https://raw.githubusercontent.com/achintmehta/research-paper-manuscripts/main/reasoning-effort-agentic-codegen/reasoning-effort-agentic-codegen.pdf
+Subject: cs.AI
+EndorsementCode: X366VX
