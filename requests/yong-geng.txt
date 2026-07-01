@@ -1,0 +1,32 @@
+Endorsement request for arXiv cs.AI: Yong Geng (GCat)
+
+- LinkedIn: https://www.linkedin.com/in/g-cat
+  (Note: I do not yet have LinkedIn's identity verification badge — I
+  understand this is Gate 1 in your protocol. I am a China-based
+  independent researcher and the Persona verification flow has regional
+  friction. I hope the following may serve as alternative evidence.)
+
+- Paper (English, arXiv-ready):
+  "Registry, Compiler, and Cloud Memory: Toward a Next-Generation
+  Agent Architecture Centered on an Agent Operating System" (AgentOS)
+  Zenodo: https://doi.org/10.5281/zenodo.20738982
+
+- Subject area: cs.AI
+- Endorsement code: 3WM4IJ
+
+Compensating factors beyond LinkedIn verification:
+1. 17 preprints published on Zenodo under "Geng Yong" — searchable,
+   DOIs, all CC BY-SA 4.0, covering agent architecture, memory
+   systems, protocol design, and energy systems.
+2. The AgentOS paper directly cites established arXiv works in cs.AI
+   (MemGPT:2310.08560, Voyager:2305.16291, AgentBench ICLR 2024).
+3. All papers include formal definitions, reproducible evaluations,
+   and architectural diagrams — they are not AI-generated fluff.
+
+I fully respect your protocol and understand if Gate 1 is a hard
+requirement. I am reaching out because your structured approach is
+the most principled public endorsement pathway I have found, and I
+believe the work merits consideration.
+
+Thank you for your time.
+— Yong Geng (GCat)
