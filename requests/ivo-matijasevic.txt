@@ -1,3 +1,4 @@
-LinkedIn profile URL: https://www.linkedin.com/in/ivo-matija%C5%A1evi%C4%87-a5364b84/
-Paper link: https://doi.org/10.5281/zenodo.20820968
-arXiv subject area: cs.SE
+LinkedIn: https://www.linkedin.com/in/ivo-matija%C5%A1evi%C4%87-a5364b84/
+Paper: https://doi.org/10.5281/zenodo.20820968
+Subject: cs.SE
+EndorsementCode: H34WAU
