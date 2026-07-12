@@ -1,0 +1,4 @@
+LinkedIn: https://www.linkedin.com/in/rodrigoramosrs/
+Paper: https://github.com/rodrigoramosrs/rodrigoramosrs/blob/main/my-papers/Sparse%20Context%20Coverage_%20A%20Structural%20Property%20of%20Retrieval-Augmented%20Intelligence%20Systems.pdf
+Subject: cs.IR
+EndorsementCode: 8LBWYF
