@@ -1,0 +1,4 @@
+LinkedIn: https://www.linkedin.com/in/nicolas-rocchia/
+Paper: https://zenodo.org/records/21839050/files/Nicolas_Rocchia_controlled_disagreement_v3.8_en.pdf
+Subject: cs.SE
+EndorsementCode: FC3LYJ
