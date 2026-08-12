@@ -17,7 +17,6 @@ import re
 import subprocess
 import sys
 import tempfile
-import time
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
@@ -28,11 +27,6 @@ try:
 except ImportError:
     sys.exit("pip install pymupdf4llm")
 
-try:
-    import anthropic
-except ImportError:
-    sys.exit("pip install anthropic")
-
 
 def _load_module(path: Path, name: str):
     spec = importlib.util.spec_from_file_location(name, path)
@@ -42,9 +36,13 @@ def _load_module(path: Path, name: str):
 
 
 download_zenodo = _load_module(Path(__file__).resolve().parent / "scripts" / "download_zenodo.py", "download_zenodo")
+claude_completions = _load_module(Path.home() / "bin" / "claude-sonnet-5-completions.py", "claude_sonnet_5_completions")
 
-CREDENTIALS_FILE = Path.home() / ".claude" / ".credentials.json"
-MODEL = "claude-haiku-4-5-20251001"
+MODEL = claude_completions.MODEL
+# Sonnet 5 defaults to interleaved thinking on this endpoint, which eats into
+# max_tokens before any visible answer is produced — keep this generous or
+# the response comes back empty with finish_reason "length".
+MAX_TOKENS = 8192
 
 
 SYSTEM_PROMPT = """\
@@ -138,14 +136,6 @@ def decode_arxiv_dates(text: str) -> str:
     return "\n".join(f"- arXiv:{arxiv_id} → {date}" for arxiv_id, date in sorted(seen.items()))
 
 
-def get_auth_token() -> str:
-    creds = json.loads(CREDENTIALS_FILE.read_text())
-    token = creds.get("claudeAiOauth", {}).get("accessToken")
-    if not token:
-        sys.exit(f"No claudeAiOauth.accessToken in {CREDENTIALS_FILE}")
-    return token
-
-
 def pdf_to_text(pdf_path: str) -> str:
     """Extract text from PDF using pymupdf4llm (markdown-aware, best-in-class)."""
     result = pymupdf4llm.to_markdown(pdf_path)
@@ -156,31 +146,20 @@ def pdf_to_text(pdf_path: str) -> str:
 
 
 def evaluate_paper(text: str) -> dict:
-    client = anthropic.Anthropic(auth_token=get_auth_token())
     current_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     system_prompt = SYSTEM_PROMPT.replace("{current_date}", current_date)
-    for attempt, delay in enumerate([0, 15, 30, 60], start=1):
-        if delay:
-            print(f"  Rate-limited, retrying in {delay}s (attempt {attempt}/4) …", file=sys.stderr)
-            time.sleep(delay)
-        try:
-            message = client.messages.create(
-                model=MODEL,
-                max_tokens=1024,
-                system=system_prompt,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": USER_PROMPT_TEMPLATE.format(text=text, arxiv_dates=decode_arxiv_dates(text)),
-                    }
-                ],
-            )
-            break
-        except anthropic.RateLimitError:
-            if attempt == 4:
-                raise
-    block = message.content[0]
-    raw = (block.text if hasattr(block, "text") else "").strip()
+    payload = {
+        "max_tokens": MAX_TOKENS,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {
+                "role": "user",
+                "content": USER_PROMPT_TEMPLATE.format(text=text, arxiv_dates=decode_arxiv_dates(text)),
+            },
+        ],
+    }
+    response = claude_completions.completion(payload)
+    raw = (response["choices"][0]["message"]["content"] or "").strip()
     # Strip accidental markdown fences if the model adds them
     if raw.startswith("```"):
         raw = raw.split("```")[1]
