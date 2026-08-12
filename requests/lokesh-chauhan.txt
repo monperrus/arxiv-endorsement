@@ -1,0 +1,4 @@
+LinkedIn: https://www.linkedin.com/in/lokeshchauhanthatsme/
+Paper: https://github.com/lokesh0186/iac-guard-v/blob/7646d5930832cc7a6b4dcd7c59de57a6c50fc4b5/paper.pdf
+Subject: cs.SE
+EndorsementCode: JRIRBB
