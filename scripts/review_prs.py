@@ -5,7 +5,7 @@ A request PR is "valid" when its requests/*.txt file passes scripts/validate_req
 Skips PRs that already carry a check comment (idempotent).
 
 Usage:
-  ./scripts/post_pr_checks.py [--repo owner/repo] [--dry-run]
+  ./scripts/review_prs.py [--repo owner/repo] [--dry-run]
 """
 
 from __future__ import annotations
