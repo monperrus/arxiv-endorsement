@@ -1,0 +1,75 @@
+name: Register Merged Endorsement
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: arxiv-endorsement-registration
+  cancel-in-progress: false
+
+jobs:
+  endorse:
+    # Secrets are only used after a PR has been merged into the default branch.
+    if: >-
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the merged revision
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+
+      - name: Locate the new endorsement request
+        id: request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          request_file="$(
+            gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files" \
+              --jq '.[] | select(.status == "added" and (.filename | test("^requests/[^/]+\\.txt$"))) | .filename'
+          )"
+          if [ -z "$request_file" ] || [ "$(printf '%s\n' "$request_file" | wc -l)" -ne 1 ]; then
+            echo "A merged endorsement PR must add exactly one requests/*.txt file." >&2
+            exit 1
+          fi
+          echo "file=$request_file" >> "$GITHUB_OUTPUT"
+
+      - name: Skip an already registered request
+        id: prior
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          comments="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" --jq '.[].body')"
+          if rg -Fq '<!-- arxiv-endorsement-registered -->' <<< "$comments"; then
+            echo "registered=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "registered=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Register endorsement with arXiv
+        if: steps.prior.outputs.registered != 'true'
+        env:
+          ARXIV_USERNAME: ${{ secrets.ARXIV_USERNAME }}
+          ARXIV_PASSWORD: ${{ secrets.ARXIV_PASSWORD }}
+        run: python scripts/endorse_merged_request.py "${{ steps.request.outputs.file }}"
+
+      - name: Record successful registration on the pull request
+        if: steps.prior.outputs.registered != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REQUEST_FILE: ${{ steps.request.outputs.file }}
+        run: |
+          gh pr comment "$PR_NUMBER" --body "<!-- arxiv-endorsement-registered -->
+          Registered the endorsement code from \`$REQUEST_FILE\` with arXiv."
