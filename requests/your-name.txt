@@ -1,4 +1,4 @@
 LinkedIn: https://www.linkedin.com/in/your-profile
 Paper: https://example.org/your-paper.pdf
-Subject: cs.LG
+Subject: cs.SE
 EndorsementCode: A1B2C3
