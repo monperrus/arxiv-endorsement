@@ -1,0 +1,4 @@
+LinkedIn: https://www.linkedin.com/in/erik-hill-98895575
+Paper: https://raw.githubusercontent.com/egnaro9/vac-protocol/81dfc7a76e6d660ad0f0b055134703b15a5f4e8e/paper/arxiv/main.pdf
+Subject: cs.SE
+EndorsementCode: SYXI8C
