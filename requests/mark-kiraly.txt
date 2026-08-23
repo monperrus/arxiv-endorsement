@@ -1,0 +1,4 @@
+LinkedIn: https://www.linkedin.com/in/programmergnome/
+Paper: https://github.com/ProgrammerGnome/orbitcore_anomaly_detection/blob/main/docs/orbitcore.pdf
+Subject: cs.CV
+EndorsementCode: 9ZVNV7
