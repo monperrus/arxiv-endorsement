@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/iamharshit237/
+Paper: https://github.com/IAmHarshit0/MultiAgentDeceptionSimulation/blob/main/From_Communication_to_Behavior__An_Empirical_Study_of_Deception_in_Multi_Agent_Systems.pdf
+Repo : https://github.com/IAmHarshit0/MultiAgentDeceptionSimulation
+Subject: cs.AI
+EndorsementCode: CKWQJX
