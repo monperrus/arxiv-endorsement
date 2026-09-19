@@ -1,0 +1,5 @@
+LinkedIn: https://linkedin.com/in/shohan414
+Paper: https://raw.githubusercontent.com/ShohanRony/energy-measurement-compressed-dl-review/master/paper.pdf
+Repo: https://github.com/ShohanRony/energy-measurement-compressed-dl-review
+Subject: cs.LG
+EndorsementCode: NDEAAT
