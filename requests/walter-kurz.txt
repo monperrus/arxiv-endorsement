@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/drwalterkurz/
+Paper: https://journal.swissi-ai.institute/pdf/research/agnostyca.pdf
+Repo: https://github.com/Swissi-AI-Journal/soeptiqyucow
+Subject: cs.SE
+EndorsementCode: E3ZRWE
