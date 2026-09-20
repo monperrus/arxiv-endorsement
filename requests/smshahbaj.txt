@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/sm-shahbaj
+Paper: https://figshare.com/articles/preprint/_b_RIFA_b_A_Family_of_Efficient_Small_Language_Models_for_Practical_Bilingual_Text_Generation/33941830?file=69031042
+Repo: https://github.com/smshahbaj/RIFA-Text-Series
+Subject: cs.CL
+EndorsementCode: EGSJXI
