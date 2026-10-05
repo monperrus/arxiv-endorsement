@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/fatih-altiok-028b76b3
+Paper: https://github.com/fatihaltiok/orchestrated-coding-team/raw/v1.3/paper/the-orchestrated-coding-team-1.3.pdf
+Repo: https://github.com/fatihaltiok/orchestrated-coding-team
+Subject: cs.SE
+EndorsementCode: HP4J6M
