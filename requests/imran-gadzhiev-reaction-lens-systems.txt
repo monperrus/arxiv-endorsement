@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/imrangadzhiev
+Paper: https://raw.githubusercontent.com/iCodeCraft/reaction-lens-systems/d09ace9b0a2a22aeb3bcc7d830a2bc2abdbbcf93/paper/reaction-lens-systems.pdf
+Repo: https://github.com/iCodeCraft/reaction-lens-systems
+Subject: cs.SE
+EndorsementCode: RR8GWU
