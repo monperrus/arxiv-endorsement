@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/samuele-giampieri-b1b67597
+Paper: https://github.com/samugit83/cortex/releases/download/v1.0.4/cortex-paper.pdf
+Repo: https://github.com/samugit83/cortex
+Subject: cs.SE
+EndorsementCode: UAOEMV
