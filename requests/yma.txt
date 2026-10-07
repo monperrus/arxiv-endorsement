@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/yuan-eddy-ma-941240132/?isSelfProfile=true
+Paper: https://github.com/wiltechs-hd/wilro-moe/blob/main/WILRO_MoE.pdf
+Repo: https://github.com/wiltechs-hd/wilro-moe
+Subject: cs.SE
+EndorsementCode: 9YOZ99
