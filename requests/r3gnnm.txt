@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/r3gnnm
+Paper: https://raw.githubusercontent.com/r3gnnm/hier-abstraction-diagnostic/main/paper/arxiv_paper.pdf
+Repo: https://github.com/r3gnnm/hier-abstraction-diagnostic
+Subject: cs.LG
+EndorsementCode: 8GD9F8
