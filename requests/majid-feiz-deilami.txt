@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/majid-feizi/
+Paper: https://zenodo.org/records/23377965
+Repo: https://github.com/majidfeiz/archguard-apr
+Subject: cs.SE
+EndorsementCode: N9I4Z8
