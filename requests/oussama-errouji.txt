@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/oussama-errouji/
+Paper: https://doi.org/10.36227/techrxiv.175985763.34566478/v1
+Repo: https://github.com/ErroujiOussama/RobotX_Vision
+Subject: cs.SE
+EndorsementCode: 9NXUEN
