@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/exaud-hudson-tarimo-390a1887
+Paper: https://github.com/exaud40/ToSC_survey/blob/main/Towards_Task_Oriented_Semantic_Communication__A_Survey_on_Technologies__Opportunities__and_Challenges.pdf
+Repo: https://github.com/exaud40/ToSC_survey
+Subject: cs.SE
+EndorsementCode: UBW7C6
