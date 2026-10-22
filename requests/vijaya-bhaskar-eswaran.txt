@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/vijaya-bhaskar-eswaran
+Paper: https://github.com/vijayabhaskar-ev/dreamer_v4/releases/download/paper-v1/silent_pipeline_defects_dreamer4.pdf
+Repo: https://github.com/vijayabhaskar-ev/dreamer_v4
+Subject: cs.SE
+EndorsementCode: J9ZQT6
