@@ -330,20 +330,6 @@ def post_comment(repo: str, pr_number: int, body: str) -> None:
         Path(body_path).unlink(missing_ok=True)
 
 
-def edit_comment(repo: str, comment_id: str, body: str) -> None:
-    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False) as f:
-        f.write(body)
-        body_path = f.name
-    try:
-        subprocess.run(
-            ["gh", "api", "--method", "PATCH", f"repos/{repo}/issues/comments/{comment_id}",
-             "-F", f"body=@{body_path}"],
-            check=True, capture_output=True, text=True,
-        )
-    finally:
-        Path(body_path).unlink(missing_ok=True)
-
-
 def process_pr(
     repo: str, pr: dict, dry_run: bool, update: bool,
     skip_repo: bool = False, threshold: float = check_repo.DEFAULT_TRACEABILITY_THRESHOLD,
@@ -434,10 +420,6 @@ def process_pr(
     comment = build_comment(result, paper_url, repo_label, ", ".join(_MODELS_USED) or "unknown", checksum, repo_result)
     if dry_run:
         print(f"\n--- PR #{number} (dry run, not posted) ---\n{comment}\n")
-    elif existing_comment:
-        comment_id = existing_comment["url"].rsplit("-", 1)[-1]
-        edit_comment(repo, comment_id, comment)
-        print(f"PR #{number}: comment updated", file=sys.stderr)
     else:
         post_comment(repo, number, comment)
         print(f"PR #{number}: comment posted", file=sys.stderr)
@@ -447,7 +429,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", default=DEFAULT_REPO)
     parser.add_argument("--dry-run", action="store_true", help="print comments instead of posting them")
-    parser.add_argument("--update", action="store_true", help="re-run already-checked PRs and edit the existing check comment in place")
+    parser.add_argument("--update", action="store_true", help="re-run already-checked PRs and post a new check comment")
     parser.add_argument("--pr", type=int, action="append", help="only process these PR numbers (repeatable)")
     parser.add_argument("--no-repo-check", action="store_true", help="skip gate 4 (open science repository)")
     parser.add_argument(

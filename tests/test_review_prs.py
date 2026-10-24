@@ -21,6 +21,7 @@ review_prs = _load(ROOT / "scripts" / "review_prs.py", "review_prs")
 
 WRONG_SUBJECT = "LinkedIn: https://www.linkedin.com/in/someone\nPaper: https://example.org/p.pdf\nRepo: https://github.com/someone/repo\nSubject: cs.AI\nEndorsementCode: A1B2C3\n"
 MALFORMED = "LinkedIn: https://www.linkedin.com/in/someone\nSubject: cs.SE\n"
+VALID = "LinkedIn: https://www.linkedin.com/in/someone\nPaper: https://example.org/p.pdf\nRepo: https://github.com/someone/repo\nSubject: cs.SE\nEndorsementCode: A1B2C3\n"
 
 PR = {"number": 42, "files": [{"path": "requests/someone.txt"}], "headRefOid": "deadbeef", "author": {"login": "someone"}}
 
@@ -317,7 +318,7 @@ def _comments_api(monkeypatch, comments: list[dict]) -> None:
         # author asked for a re-check after our check comment
         ([{"login": "bot", "created_at": "2026-10-01T00:00:00Z", "updated_at": "2026-10-01T00:00:00Z", "body": review_prs.COMMENT_MARKER},
           {"login": "someone", "created_at": "2026-10-02T00:00:00Z", "updated_at": "2026-10-02T00:00:00Z", "body": "fixed"}], True),
-        # the check comment was re-edited (--update) after the author's reply
+        # a later re-check comment was posted after the author's reply
         ([{"login": "bot", "created_at": "2026-10-01T00:00:00Z", "updated_at": "2026-10-03T00:00:00Z", "body": review_prs.COMMENT_MARKER},
           {"login": "someone", "created_at": "2026-10-02T00:00:00Z", "updated_at": "2026-10-02T00:00:00Z", "body": "fixed"}], False),
         # someone else replied
@@ -335,6 +336,24 @@ def test_update_never_autocloses(stubbed, monkeypatch):
     monkeypatch.setattr(review_prs, "fetch_file_content", lambda repo, path, ref: MALFORMED)
     review_prs.process_pr("owner/repo", _pr_updated(30), dry_run=False, update=True, now=NOW)
     assert stubbed["closed"] == []
+
+
+def test_update_posts_a_new_check_comment(stubbed, monkeypatch, tmp_path):
+    """A re-check preserves the earlier assessment as an auditable record."""
+    paper = tmp_path / "paper.pdf"
+    paper.write_bytes(b"pdf")
+    existing = {"body": review_prs.COMMENT_MARKER, "url": "x#issuecomment-1"}
+    monkeypatch.setattr(review_prs, "find_comment", lambda repo, n, marker=review_prs.COMMENT_MARKER: existing)
+    monkeypatch.setattr(review_prs, "fetch_file_content", lambda repo, path, ref: VALID)
+    monkeypatch.setattr(review_prs.check_paper, "download_pdf", lambda url: paper)
+    monkeypatch.setattr(review_prs.check_paper, "sha256_file", lambda path: "checksum")
+    monkeypatch.setattr(review_prs.check_paper, "pdf_to_text", lambda path: "paper text")
+    monkeypatch.setattr(review_prs, "evaluate_paper", lambda text, complete: (_gate_result(), "model"))
+    monkeypatch.setattr(review_prs, "build_comment", lambda *args: "new assessment")
+
+    review_prs.process_pr("owner/repo", PR, dry_run=False, update=True, skip_repo=True)
+
+    assert stubbed["comments"] == [(42, "new assessment")]
 
 
 def _gate_result(verdict: bool = True) -> dict:
