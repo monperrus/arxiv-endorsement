@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/sunday-ikechukwu-1651a735b
+Paper: https://raw.githubusercontent.com/sunday-ikechukwu/shielded-autonomy/main/paper/ICAIR_2026_Paper_93_Revised_Manuscript_Ikechukwu.pdf
+Repo: https://github.com/sunday-ikechukwu/shielded-autonomy
+Subject: cs.SE
+EndorsementCode: BJE3DO
