@@ -1,4 +1,4 @@
-LinkedIn: https://www.linkedin.com/in/YOUR-VERIFIED-PROFILE
+LinkedIn: https://www.linkedin.com/in/adam-mel
 Paper: https://raw.githubusercontent.com/stillnotadam/proof-carrying-triage/master/paper/paper.pdf
 Repo: https://github.com/stillnotadam/proof-carrying-triage
 Subject: cs.CR
