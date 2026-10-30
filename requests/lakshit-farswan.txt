@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/lakshit-farswan/
+Paper: https://github.com/LakshitF/valid-but-wrong/blob/1dc4bb03f4a8b9fcecf98bce666adb847b9cd180/paper/main.pdf
+Repo: https://github.com/LakshitF/valid-but-wrong
+Subject: cs.CL
+EndorsementCode: 349HDO
