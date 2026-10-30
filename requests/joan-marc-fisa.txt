@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/fisagol/
+Paper: https://zenodo.org/records/23763881/files/caleta.pdf
+Repo: https://github.com/BiVelio/caleta
+Subject: cs.SE
+EndorsementCode: YJ8RLG
