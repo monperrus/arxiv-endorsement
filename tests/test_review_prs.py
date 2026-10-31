@@ -83,7 +83,7 @@ def test_completion_uses_best_effort_medium_tier(monkeypatch, tmp_path):
 
     def fake_run(cmd, **kwargs):
         calls.append(cmd[1:])
-        return _Proc(0, '{"model": "x", "best_effort": {"model": "claude-sonnet-5-5"}, "choices": []}')
+        return _Proc(0, '{"model": "x", "best_effort": {"model": "claude-sonnet-5-5"}, "choices": [{"message": {"content": "{}"}}]}')
 
     monkeypatch.setattr(review_prs.subprocess, "run", fake_run)
     monkeypatch.setattr(review_prs, "_PINNED_MODEL", None)
@@ -102,7 +102,7 @@ def test_completion_pins_the_first_model_for_later_calls(monkeypatch, tmp_path):
 
     def fake_run(cmd, **kwargs):
         calls.append(cmd[2:])
-        return _Proc(0, '{"best_effort": {"backend": "cursor-composer-completions.py", "model": "composer-2.5"}}')
+        return _Proc(0, '{"best_effort": {"backend": "cursor-composer-completions.py", "model": "composer-2.5"}, "choices": [{"message": {"content": "{}"}}]}')
 
     monkeypatch.setattr(review_prs.subprocess, "run", fake_run)
     review_prs._MODELS_USED.clear()
@@ -124,7 +124,7 @@ def test_completion_falls_back_to_the_tier_when_the_pinned_model_fails(monkeypat
         calls.append(cmd[2:])
         if "--model" in cmd:
             return _Proc(1, "")
-        return _Proc(0, '{"best_effort": {"backend": "kimi-k3-completions.py", "model": "kimi-k3"}}')
+        return _Proc(0, '{"best_effort": {"backend": "kimi-k3-completions.py", "model": "kimi-k3"}, "choices": [{"message": {"content": "{}"}}]}')
 
     monkeypatch.setattr(review_prs.subprocess, "run", fake_run)
     review_prs.best_effort_completion({"messages": []})
@@ -387,3 +387,30 @@ def test_needs_osaudit():
     assert review_prs.needs_osaudit(None)
     assert not review_prs.needs_osaudit({"createdAt": "2026-10-31T23:59:59Z"})
     assert review_prs.needs_osaudit({"createdAt": "2026-11-01T00:00:00Z"})
+
+
+def _answer(content: str, model: str = "m") -> str:
+    import json as _json
+    return _json.dumps({"best_effort": {"model": model}, "choices": [{"message": {"content": content}}]})
+
+
+def test_completion_retries_when_the_answer_holds_no_json(monkeypatch, tmp_path):
+    """Regression (PR #55): a model exited 0 with a progress line instead of the JSON."""
+    backend = tmp_path / "best-effort-completions.py"
+    backend.write_text("")
+    monkeypatch.setattr(review_prs, "COMPLETION_BACKEND", backend)
+    monkeypatch.setattr(review_prs, "_PINNED_MODEL", None)
+    answers = iter([_answer("Reviewing the repository data files and verification script."), _answer('{"claims": []}')])
+    monkeypatch.setattr(review_prs.subprocess, "run", lambda cmd, **kw: _Proc(0, next(answers)))
+    response = review_prs.best_effort_completion({"messages": []})
+    assert response["choices"][0]["message"]["content"] == '{"claims": []}'
+
+
+def test_completion_raises_when_no_attempt_holds_json(monkeypatch, tmp_path):
+    backend = tmp_path / "best-effort-completions.py"
+    backend.write_text("")
+    monkeypatch.setattr(review_prs, "COMPLETION_BACKEND", backend)
+    monkeypatch.setattr(review_prs, "_PINNED_MODEL", None)
+    monkeypatch.setattr(review_prs.subprocess, "run", lambda cmd, **kw: _Proc(0, _answer("working on it")))
+    with pytest.raises(RuntimeError, match="no completion backend succeeded"):
+        review_prs.best_effort_completion({"messages": []})

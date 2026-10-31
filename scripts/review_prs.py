@@ -42,6 +42,8 @@ OSAUDIT_GRANDFATHER_UNTIL = datetime(2026, 11, 1, tzinfo=timezone.utc)
 # best-effort-completions.py handles the fallback across backends within the tier.
 COMPLETION_BACKEND = Path.home() / "bin" / "best-effort-completions.py"
 COMPLETION_TIER = "medium"
+# Tier calls tried per completion when the answer holds no JSON object (the tier picks a model at random).
+COMPLETION_ATTEMPTS = 3
 # Agent launchers (agentknit one-shot tasks on stdin). Each maps to a model name
 # reported in the posted check comment.
 AGENT_SCRIPTS = {
@@ -242,18 +244,37 @@ def best_effort_completion(payload: dict) -> dict:
             text=True,
         )
 
+    def usable(proc: subprocess.CompletedProcess) -> dict | None:
+        """The parsed response if the backend succeeded AND its answer holds a JSON object.
+
+        Agent-style models sometimes exit 0 with only a progress line ("Reviewing the
+        repository ...") instead of the requested JSON; that is a failed attempt, not an answer.
+        """
+        if proc.returncode != 0:
+            return None
+        try:
+            response = json.loads(proc.stdout)
+            check_paper.extract_json_object(response["choices"][0]["message"]["content"] or "")
+        except (ValueError, KeyError, IndexError, TypeError):
+            return None
+        return response
+
+    response = None
     proc = None
     if _PINNED_MODEL is not None:
         proc = run("--model", _PINNED_MODEL)
-        if proc.returncode != 0:
-            print(f"  pinned model {_PINNED_MODEL} failed, falling back to the {COMPLETION_TIER} tier", file=sys.stderr)
-    if proc is None or proc.returncode != 0:
+        response = usable(proc)
+        if response is None:
+            print(f"  pinned model {_PINNED_MODEL} gave no usable answer, falling back to the {COMPLETION_TIER} tier", file=sys.stderr)
+    for _ in range(COMPLETION_ATTEMPTS if response is None else 0):
         proc = run("--tier", COMPLETION_TIER)
-    if proc.returncode != 0:
+        response = usable(proc)
+        if response is not None:
+            break
+    if response is None:
         raise RuntimeError(
             f"no completion backend succeeded: {backend.name}: {(proc.stderr or proc.stdout).strip()[:500]}"
         )
-    response = json.loads(proc.stdout)
     answered_by = response.get("best_effort", {}).get("backend")
     if answered_by:
         _PINNED_MODEL = backend_model_names().get(answered_by, _PINNED_MODEL)
@@ -434,7 +455,9 @@ def process_pr(
                 osaudit=needs_osaudit(existing_comment),
             )
         except Exception as e:
-            print(f"PR #{number}: repository check failed: {e}", file=sys.stderr)
+            # Posting without gates 4 and 5 would show a verdict that never saw them; retry next run.
+            print(f"PR #{number}: repository check failed, nothing posted: {e}", file=sys.stderr)
+            return
 
     comment = build_comment(result, paper_url, repo_label, ", ".join(_MODELS_USED) or "unknown", checksum, repo_result)
     if dry_run:
