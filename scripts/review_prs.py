@@ -34,6 +34,9 @@ AUTOCLOSE_MARKER = "<!-- arxiv-endorsement-autoclose -->"
 AUTOCLOSE_MESSAGE = "autoclosing due to failing checks, thanks for your PR."
 AUTOCLOSE_AFTER = timedelta(weeks=2)
 GATE_FAIL_MARK = "✗ FAIL"
+# PRs first analyzed up to this instant (2026-10-31, the day gate 5 was introduced) are
+# grandfathered: no osaudit gate for them. Everything analyzed later gets it, always.
+OSAUDIT_GRANDFATHER_UNTIL = datetime(2026, 11, 1, tzinfo=timezone.utc)
 # Tier medium, not the default low: low-tier models (e.g. Haiku) gave gate verdicts
 # that proved unstable across identical runs (same PDF checksum, opposite verdict).
 # best-effort-completions.py handles the fallback across backends within the tier.
@@ -101,6 +104,14 @@ def find_comment(repo: str, pr_number: int, marker: str = COMMENT_MARKER) -> dic
 def close_pr(repo: str, pr_number: int, body: str) -> None:
     post_comment(repo, pr_number, body)
     subprocess.run(["gh", "pr", "close", str(pr_number), "--repo", repo], check=True)
+
+
+def needs_osaudit(existing_comment: dict | None) -> bool:
+    """Gate 5 applies unless the PR's first check comment predates the gate."""
+    if existing_comment is None:
+        return True
+    created = datetime.fromisoformat(existing_comment["createdAt"].replace("Z", "+00:00"))
+    return created >= OSAUDIT_GRANDFATHER_UNTIL
 
 
 def is_stale_failing(pr: dict, check_comment: dict, now: datetime) -> bool:
@@ -420,8 +431,7 @@ def process_pr(
         try:
             repo_result = check_repo.check_repo(
                 repo_url, text, complete, threshold,
-                # Gate 5 is for PRs never analyzed before it existed; re-checks keep their old gates.
-                osaudit=existing_comment is None,
+                osaudit=needs_osaudit(existing_comment),
             )
         except Exception as e:
             print(f"PR #{number}: repository check failed: {e}", file=sys.stderr)

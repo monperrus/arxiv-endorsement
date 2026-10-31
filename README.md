@@ -53,7 +53,7 @@ If your paper reports a number that lives nowhere but in the PDF, commit the dat
 
 ## Gate 5: `osaudit.toml`
 
-**What I need:** The open science repository must contain an `osaudit.toml` at its root, and [osaudit](https://github.com/ASSERT-KTH/osaudit) must verify it (exit status 0, static checks). I run this step myself, on requests filed after this gate was introduced (already-analyzed requests are not re-checked against it).
+**What I need:** The open science repository must contain an `osaudit.toml` at its root, and [osaudit](https://github.com/ASSERT-KTH/osaudit) must verify it (exit status 0, static checks). I run this step myself, on every request analyzed from 2026-11-01 on; requests already analyzed by 2026-10-31 are exempt.
 
 **Why:** `osaudit` mechanically traces every number, quote and result of the paper to the evidence behind it. Conventions: <https://github.com/ASSERT-KTH/assert-research-agent/blob/main/CONVENTIONS.md>. Run `osaudit` in your repository before submitting.
 
