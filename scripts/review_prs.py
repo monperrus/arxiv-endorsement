@@ -418,7 +418,11 @@ def process_pr(
     if repo_url and not skip_repo:
         print(f"PR #{number}: checking repository {repo_url} …", file=sys.stderr)
         try:
-            repo_result = check_repo.check_repo(repo_url, text, complete, threshold)
+            repo_result = check_repo.check_repo(
+                repo_url, text, complete, threshold,
+                # Gate 5 is for PRs never analyzed before it existed; re-checks keep their old gates.
+                osaudit=existing_comment is None,
+            )
         except Exception as e:
             print(f"PR #{number}: repository check failed: {e}", file=sys.stderr)
 

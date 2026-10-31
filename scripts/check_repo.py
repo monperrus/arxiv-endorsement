@@ -456,8 +456,9 @@ def check_repo(
     paper_text: str,
     complete,
     threshold: float = DEFAULT_TRACEABILITY_THRESHOLD,
+    osaudit: bool = True,
 ) -> dict:
-    """Run gate 4. `complete` maps an OpenAI-style payload to a response dict."""
+    """Run gate 4 (and gate 5 unless `osaudit` is False). `complete` maps an OpenAI-style payload to a response dict."""
     result: dict = {
         "repo_url": repo_url,
         "verdict": False,
@@ -492,7 +493,8 @@ def check_repo(
             result["summary"] = "The linked repository contains no files."
             return result
 
-        result["osaudit"] = check_osaudit.check_osaudit(clone_dir)
+        if osaudit:
+            result["osaudit"] = check_osaudit.check_osaudit(clone_dir)
 
         claims = parse_claims_response(complete(build_claims_payload(paper_text)))
         hits = scan_repo_for_values(clone_dir, claims)
@@ -527,7 +529,7 @@ def check_repo(
         )
 
         matches = bool(verification.get("repo_matches_paper", {}).get("verdict", False))
-        result["verdict"] = matches and ratio >= threshold and result["osaudit"]["verdict"]
+        result["verdict"] = matches and ratio >= threshold and result.get("osaudit", {"verdict": True})["verdict"]
         result["confidence"] = verification.get("repo_matches_paper", {}).get("confidence", "medium")
 
         feedback = []
@@ -541,7 +543,7 @@ def check_repo(
                 f"(threshold {threshold:.0%}). Untraceable: {listed}"
                 + (" …" if len(missing) > 8 else "")
             )
-        if not result["osaudit"]["verdict"]:
+        if not result.get("osaudit", {"verdict": True})["verdict"]:
             feedback.append(result["osaudit"]["feedback"])
         if verification.get("feedback"):
             feedback.append(verification["feedback"])

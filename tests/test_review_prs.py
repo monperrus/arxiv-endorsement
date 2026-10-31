@@ -381,3 +381,9 @@ def test_build_comment_omits_commit_sha_when_absent():
     )
     assert "Repo: https://github.com/owner/repo\n" in comment
     assert "@" not in comment
+
+
+def test_gate5_skipped_for_already_analyzed_prs():
+    import inspect
+    src = inspect.getsource(review_prs.process_pr)
+    assert "osaudit=existing_comment is None" in src

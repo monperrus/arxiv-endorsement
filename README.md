@@ -28,7 +28,7 @@ At the same time, I want to be helpful to genuine researchers who lack an endors
 
 ## Gate 3: Automated AI Peer Review
 
-**What I need:** Nothing extra from you — I run this step myself.
+**What I need:** Nothing extra from you — I run this step myself, on requests filed after this gate was introduced (already-analyzed requests are not re-checked against it).
 
 **Why:** Reading every paper in depth is time-consuming. To ensure consistent and thorough assessment, I pass the paper through an automated AI peer review. This checks for basic scientific soundness, clarity, and appropriateness for the claimed subject area.
 
@@ -38,7 +38,7 @@ This is not a replacement for human peer review and does not guarantee the paper
 
 ## Gate 4: Repository ↔ Paper Correspondence
 
-**What I need:** Nothing extra from you beyond the `Repo` link — I run this step myself.
+**What I need:** Nothing extra from you beyond the `Repo` link — I run this step myself, on requests filed after this gate was introduced (already-analyzed requests are not re-checked against it).
 
 **Why:** A repository link is worthless if the repository is unrelated to the paper, or if the paper's numbers cannot be found anywhere in it. So I check both:
 
@@ -53,7 +53,7 @@ If your paper reports a number that lives nowhere but in the PDF, commit the dat
 
 ## Gate 5: `osaudit.toml`
 
-**What I need:** The open science repository must contain an `osaudit.toml` at its root, and [osaudit](https://github.com/ASSERT-KTH/osaudit) must verify it (exit status 0, static checks). I run this step myself.
+**What I need:** The open science repository must contain an `osaudit.toml` at its root, and [osaudit](https://github.com/ASSERT-KTH/osaudit) must verify it (exit status 0, static checks). I run this step myself, on requests filed after this gate was introduced (already-analyzed requests are not re-checked against it).
 
 **Why:** `osaudit` mechanically traces every number, quote and result of the paper to the evidence behind it. Conventions: <https://github.com/ASSERT-KTH/assert-research-agent/blob/main/CONVENTIONS.md>. Run `osaudit` in your repository before submitting.
 
