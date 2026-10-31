@@ -385,8 +385,8 @@ def test_build_comment_omits_commit_sha_when_absent():
 
 def test_needs_osaudit():
     assert review_prs.needs_osaudit(None)
-    assert not review_prs.needs_osaudit({"createdAt": "2026-10-31T23:59:59Z"})
-    assert review_prs.needs_osaudit({"createdAt": "2026-11-01T00:00:00Z"})
+    assert not review_prs.needs_osaudit({"createdAt": "2026-10-31T06:25:44Z"})
+    assert review_prs.needs_osaudit({"createdAt": "2026-10-31T06:25:45Z"})
 
 
 def _answer(content: str, model: str = "m") -> str:

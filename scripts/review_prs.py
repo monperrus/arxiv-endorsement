@@ -34,9 +34,9 @@ AUTOCLOSE_MARKER = "<!-- arxiv-endorsement-autoclose -->"
 AUTOCLOSE_MESSAGE = "autoclosing due to failing checks, thanks for your PR."
 AUTOCLOSE_AFTER = timedelta(weeks=2)
 GATE_FAIL_MARK = "✗ FAIL"
-# PRs first analyzed up to this instant (2026-10-31, the day gate 5 was introduced) are
+# PRs first analyzed before this instant (the commit that introduced gate 5) are
 # grandfathered: no osaudit gate for them. Everything analyzed later gets it, always.
-OSAUDIT_GRANDFATHER_UNTIL = datetime(2026, 11, 1, tzinfo=timezone.utc)
+OSAUDIT_GRANDFATHER_UNTIL = datetime(2026, 10, 31, 6, 25, 45, tzinfo=timezone.utc)
 # Tier medium, not the default low: low-tier models (e.g. Haiku) gave gate verdicts
 # that proved unstable across identical runs (same PDF checksum, opposite verdict).
 # best-effort-completions.py handles the fallback across backends within the tier.
