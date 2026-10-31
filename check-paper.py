@@ -244,7 +244,7 @@ def render_result(result: dict, pdf_path: str, repo_result: dict | None = None) 
 
     if repo_result is not None:
         v = repo_result["verdict"]
-        overall = overall and v
+        overall = overall and check_repo.passes_all_repo_gates(repo_result)
         print(f"\n  {verdict_str(v)}  {GATE4_LABEL}{conf_str(repo_result.get('confidence', ''))}")
         if repo_result.get("n_claims"):
             print(
@@ -254,6 +254,11 @@ def render_result(result: dict, pdf_path: str, repo_result: dict | None = None) 
         for c in repo_result.get("claims", []):
             if c["status"] == "not_found":
                 print(f"        {WARN} {c['value']}{(' ' + c['unit']) if c['unit'] else ''} — {c['claim']} ({c['location']})")
+        osa = repo_result.get("osaudit")
+        if osa is not None:
+            print(f"\n  {verdict_str(osa['verdict'])}  {check_repo.check_osaudit.GATE5_LABEL}")
+            if not osa["verdict"]:
+                print(f"        → {osa['feedback']}")
         if not v:
             if repo_result.get("feedback"):
                 print(f"        → {repo_result['feedback']}")
@@ -287,7 +292,7 @@ def write_report(result: dict, pdf_path: str, repo_result: dict | None = None) -
 
     overall = result.get("overall_verdict", all(result[k]["verdict"] for k, _ in gates))
     if repo_result is not None:
-        overall = overall and repo_result["verdict"]
+        overall = overall and check_repo.passes_all_repo_gates(repo_result)
     overall_str = "✓ SUITABLE for arXiv cs.SE endorsement" if overall else "✗ NOT suitable for arXiv cs.SE endorsement"
 
     lines = [
@@ -317,6 +322,11 @@ def write_report(result: dict, pdf_path: str, repo_result: dict | None = None) -
         lines.append(f"### {verdict_md(repo_result['verdict'])}  {GATE4_LABEL}{conf_md(repo_result.get('confidence', ''))}")
         lines.append("")
         lines.append(check_repo.render_gate4(repo_result))
+        osa = repo_result.get("osaudit")
+        if osa is not None:
+            lines.append(f"### {verdict_md(osa['verdict'])}  {check_repo.check_osaudit.GATE5_LABEL}")
+            lines.append("")
+            lines.append(check_repo.check_osaudit.render_gate5(osa))
 
     lines += [
         "## Summary",

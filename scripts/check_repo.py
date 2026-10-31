@@ -529,7 +529,7 @@ def check_repo(
         )
 
         matches = bool(verification.get("repo_matches_paper", {}).get("verdict", False))
-        result["verdict"] = matches and ratio >= threshold and result.get("osaudit", {"verdict": True})["verdict"]
+        result["verdict"] = matches and ratio >= threshold
         result["confidence"] = verification.get("repo_matches_paper", {}).get("confidence", "medium")
 
         feedback = []
@@ -543,14 +543,17 @@ def check_repo(
                 f"(threshold {threshold:.0%}). Untraceable: {listed}"
                 + (" …" if len(missing) > 8 else "")
             )
-        if not result.get("osaudit", {"verdict": True})["verdict"]:
-            feedback.append(result["osaudit"]["feedback"])
         if verification.get("feedback"):
             feedback.append(verification["feedback"])
         result["feedback"] = " ".join(feedback)
         return result
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def passes_all_repo_gates(repo_result: dict) -> bool:
+    """Gates 4 and 5 together; `verdict` alone is gate 4 (gate 5 is absent for grandfathered PRs)."""
+    return bool(repo_result["verdict"]) and repo_result.get("osaudit", {"verdict": True})["verdict"]
 
 
 def render_gate4(result: dict) -> str:
@@ -582,12 +585,6 @@ def render_gate4(result: dict) -> str:
             claim_text = (c["claim"] or "")[:90].replace("|", "\\|")
             lines.append(f"| {claim_text} | {value} | {icon.get(c['status'], c['status'])} | {evidence} |")
         lines.append("")
-    osa = result.get("osaudit")
-    if osa is not None:
-        lines.append(f"{'✓ PASS' if osa['verdict'] else '✗ FAIL'} {check_osaudit.GATE5_LABEL}")
-        lines.append("")
-        if not osa["verdict"]:
-            lines.append(check_osaudit.render_gate5(osa))
     if result.get("feedback"):
         lines.append(f"> **Feedback:** {result['feedback']}")
         lines.append("")

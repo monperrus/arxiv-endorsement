@@ -304,7 +304,7 @@ def build_comment(
 
     overall = result.get("overall_verdict", all(result[k]["verdict"] for k, _ in gates))
     if repo_result is not None:
-        overall = overall and repo_result["verdict"]
+        overall = overall and check_repo.passes_all_repo_gates(repo_result)
     overall_str = "✓ SUITABLE for arXiv cs.SE endorsement" if overall else "✗ NOT suitable for arXiv cs.SE endorsement"
 
     repo_line = f"Repo: {repo_url}"

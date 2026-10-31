@@ -242,3 +242,36 @@ def test_gate5_fails_on_findings(tmp_path: Path):
 def test_gate5_fails_when_osaudit_cannot_run(tmp_path: Path):
     (tmp_path / "osaudit.toml").write_text("")
     assert not _osaudit_module().check_osaudit(tmp_path, _fake_bin(tmp_path, 2))["verdict"]
+
+
+def test_gate4_verdict_is_independent_of_gate5(fake_repo: Path, monkeypatch):
+    """Regression (PR #57): 30/30 numbers backed was shown as Gate 4 FAIL because gate 5 failed."""
+    import json as _json
+    import shutil
+
+    def fake_clone(url: str, dest: Path):
+        shutil.copytree(fake_repo, dest, ignore=shutil.ignore_patterns(".git"))
+        subprocess.run(["git", "init", "--quiet"], cwd=dest, check=True)
+        return True, "cloned"
+
+    monkeypatch.setattr(check_repo, "clone_repo", fake_clone)
+    monkeypatch.setattr(check_repo, "head_commit_sha", lambda d: "0" * 40)
+
+    def fake_complete(payload: dict) -> dict:
+        is_claims = "extract the empirical numbers" in payload["messages"][0]["content"]
+        body = (
+            {"claims": [{"id": "C1", "value": "87.3", "unit": "%", "claim": "accuracy", "location": "T1"}]}
+            if is_claims
+            else {"repo_matches_paper": {"verdict": True, "confidence": "high", "feedback": ""},
+                  "claims": [{"id": "C1", "status": "data_file", "evidence": ["results/accuracy.csv"]}],
+                  "summary": "ok"}
+        )
+        return {"choices": [{"message": {"content": _json.dumps(body)}}]}
+
+    result = check_repo.check_repo("https://github.com/owner/repo", "paper text", fake_complete)
+    assert result["verdict"] is True                      # gate 4 on its own
+    assert result["osaudit"]["verdict"] is False          # gate 5: no osaudit.toml
+    assert not check_repo.passes_all_repo_gates(result)
+    assert "osaudit.toml" not in result["feedback"]       # gate 5 feedback stays out of gate 4
+    grandfathered = check_repo.check_repo("https://github.com/owner/repo", "paper text", fake_complete, osaudit=False)
+    assert check_repo.passes_all_repo_gates(grandfathered)
