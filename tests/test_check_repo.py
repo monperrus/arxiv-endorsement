@@ -207,3 +207,38 @@ def test_passing_gate_does_not_lecture_the_author():
         "claims": [{"value": "1", "unit": "", "claim": "c", "status": "data_file", "evidence": ["a.csv"]}],
     }
     assert check_repo.RECOMMENDATIONS_URL not in check_repo.render_gate4(result)
+
+
+# --- Gate 5: osaudit.toml ---------------------------------------------------
+
+def _osaudit_module():
+    return _load(ROOT / "scripts" / "check_osaudit.py", "check_osaudit")
+
+
+def _fake_bin(tmp_path: Path, code: int, out: str = "[]") -> str:
+    script = tmp_path / "fake-osaudit"
+    script.write_text(f"#!/bin/sh\necho '{out}'\nexit {code}\n")
+    script.chmod(0o755)
+    return str(script)
+
+
+def test_gate5_fails_without_osaudit_toml(tmp_path: Path):
+    r = _osaudit_module().check_osaudit(tmp_path, _fake_bin(tmp_path, 0))
+    assert not r["verdict"] and not r["present"] and "osaudit.toml" in r["feedback"]
+
+
+def test_gate5_passes_when_osaudit_is_clean(tmp_path: Path):
+    (tmp_path / "osaudit.toml").write_text("")
+    assert _osaudit_module().check_osaudit(tmp_path, _fake_bin(tmp_path, 0))["verdict"]
+
+
+def test_gate5_fails_on_findings(tmp_path: Path):
+    (tmp_path / "osaudit.toml").write_text("")
+    out = '[{"file":"p.tex","line":2,"rule":"numbers/untraced","message":"392"}]'
+    r = _osaudit_module().check_osaudit(tmp_path, _fake_bin(tmp_path, 1, out))
+    assert not r["verdict"] and len(r["findings"]) == 1
+
+
+def test_gate5_fails_when_osaudit_cannot_run(tmp_path: Path):
+    (tmp_path / "osaudit.toml").write_text("")
+    assert not _osaudit_module().check_osaudit(tmp_path, _fake_bin(tmp_path, 2))["verdict"]

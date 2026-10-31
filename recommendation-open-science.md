@@ -1,6 +1,6 @@
 # Recommendations for Open Science Verifiability
 
-This document explains how to organize your paper and your repository so that a reader — human or automated — can check every empirical claim you make. It is the reference for [Gate 4](README.md) of the endorsement protocol: *every empirical number in the paper must be present in a committed data file, or recomputable by a committed script*.
+This document explains how to organize your paper and your repository so that a reader — human or automated — can check every empirical claim you make. It is the reference for [Gate 4](README.md) (and Gate 5, `osaudit.toml`) of the endorsement protocol: *every empirical number in the paper must be present in a committed data file, or recomputable by a committed script*.
 
 The rule of thumb: **a reader who wonders "where does 87.3% come from?" should reach the answer in one click, or one command.**
 

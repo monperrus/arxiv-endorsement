@@ -307,6 +307,11 @@ def build_comment(
                 f"  - {repo_result['n_backed']}/{repo_result['n_claims']} empirical numbers backed by a "
                 f"data file or a script ({repo_result['traceability']:.0%})"
             )
+        osa = repo_result.get("osaudit")
+        if osa is not None:
+            lines.append(f"- {verdict_md(osa['verdict'])} {check_repo.check_osaudit.GATE5_LABEL}")
+            if not osa["verdict"] and osa.get("feedback"):
+                lines.append(f"  - {osa['feedback']}")
         lines += ["", "<details><summary>Gate 4 detail — traceability of the paper's numbers</summary>", ""]
         lines.append(check_repo.render_gate4(repo_result))
         lines += ["</details>", ""]

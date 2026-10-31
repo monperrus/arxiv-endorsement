@@ -1,6 +1,6 @@
 # ArXiv Endorsement Protocol
 
-I receive many arXiv endorsement requests (and more due to Gen AI). I follow a structured protocol with four steps before endorsing. All four must pass before I can endorse.
+I receive many arXiv endorsement requests (and more due to Gen AI). I follow a structured protocol with five steps before endorsing. All five must pass before I can endorse.
 
 ## Why a Protocol?
 
@@ -48,6 +48,14 @@ This is not a replacement for human peer review and does not guarantee the paper
 If your paper reports a number that lives nowhere but in the PDF, commit the data file it came from or the script that produces it.
 
 **Read this before submitting:** [Recommendations for Open Science Verifiability](recommendation-open-science.md) — how to organize the paper (hyperlink every number to the file behind it) and the repository (name result files after your tables, commit the results, one command to regenerate them) so this gate passes.
+
+---
+
+## Gate 5: `osaudit.toml`
+
+**What I need:** The open science repository must contain an `osaudit.toml` at its root, and [osaudit](https://github.com/ASSERT-KTH/osaudit) must verify it (exit status 0, static checks). I run this step myself.
+
+**Why:** `osaudit` mechanically traces every number, quote and result of the paper to the evidence behind it. Conventions: <https://github.com/ASSERT-KTH/assert-research-agent/blob/main/CONVENTIONS.md>. Run `osaudit` in your repository before submitting.
 
 ---
 

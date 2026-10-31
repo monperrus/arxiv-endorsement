@@ -6,7 +6,8 @@ Verifies that the GitHub repository attached to an endorsement request
   1. exists, is public, and is not empty;
   2. actually corresponds to the paper;
   3. backs every empirical number in the paper with either a data file that
-     contains it or a script that can recompute it.
+     contains it or a script that can recompute it;
+  4. contains an `osaudit.toml` that osaudit verifies (scripts/check_osaudit.py).
 
 The number tracing is a hybrid: an LLM extracts the empirical claims from the
 paper text, a deterministic scanner greps the working tree for each value (so
@@ -73,6 +74,8 @@ def _load_module(path: Path, name: str):
     spec.loader.exec_module(module)
     return module
 
+
+check_osaudit = _load_module(ROOT / "scripts" / "check_osaudit.py", "check_osaudit")
 
 # ---------------------------------------------------------------------------
 # Prompts
@@ -489,6 +492,8 @@ def check_repo(
             result["summary"] = "The linked repository contains no files."
             return result
 
+        result["osaudit"] = check_osaudit.check_osaudit(clone_dir)
+
         claims = parse_claims_response(complete(build_claims_payload(paper_text)))
         hits = scan_repo_for_values(clone_dir, claims)
         verification = parse_verification_response(
@@ -522,7 +527,7 @@ def check_repo(
         )
 
         matches = bool(verification.get("repo_matches_paper", {}).get("verdict", False))
-        result["verdict"] = matches and ratio >= threshold
+        result["verdict"] = matches and ratio >= threshold and result["osaudit"]["verdict"]
         result["confidence"] = verification.get("repo_matches_paper", {}).get("confidence", "medium")
 
         feedback = []
@@ -536,6 +541,8 @@ def check_repo(
                 f"(threshold {threshold:.0%}). Untraceable: {listed}"
                 + (" …" if len(missing) > 8 else "")
             )
+        if not result["osaudit"]["verdict"]:
+            feedback.append(result["osaudit"]["feedback"])
         if verification.get("feedback"):
             feedback.append(verification["feedback"])
         result["feedback"] = " ".join(feedback)
@@ -573,6 +580,12 @@ def render_gate4(result: dict) -> str:
             claim_text = (c["claim"] or "")[:90].replace("|", "\\|")
             lines.append(f"| {claim_text} | {value} | {icon.get(c['status'], c['status'])} | {evidence} |")
         lines.append("")
+    osa = result.get("osaudit")
+    if osa is not None:
+        lines.append(f"{'✓ PASS' if osa['verdict'] else '✗ FAIL'} {check_osaudit.GATE5_LABEL}")
+        lines.append("")
+        if not osa["verdict"]:
+            lines.append(check_osaudit.render_gate5(osa))
     if result.get("feedback"):
         lines.append(f"> **Feedback:** {result['feedback']}")
         lines.append("")
