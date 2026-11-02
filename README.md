@@ -1,6 +1,6 @@
 # ArXiv Endorsement Protocol
 
-I receive many arXiv endorsement requests (and more due to Gen AI). I follow a structured protocol with five steps before endorsing. All five must pass before I can endorse.
+I receive many arXiv endorsement requests (and more due to Gen AI). I follow a structured protocol with five steps before endorsing. All five must pass before I can endorse, **including Gate 5 (`osaudit.toml`), which is enforced without exception**.
 
 ## Why a Protocol?
 
@@ -51,11 +51,15 @@ If your paper reports a number that lives nowhere but in the PDF, commit the dat
 
 ---
 
-## Gate 5: `osaudit.toml`
+## Gate 5: `osaudit.toml` — ⚠️ MANDATORY, NO EXCEPTIONS
 
-**What I need:** The open science repository must contain an `osaudit.toml` at its root, and [osaudit](https://github.com/ASSERT-KTH/osaudit) must verify it (exit status 0, static checks). I run this step myself, on every request first analyzed from 2026-10-31 06:25 UTC on; requests analyzed before are exempt.
+> **Since 2026-11-02, Gate 5 is enforced absolutely.** A request whose repository has no `osaudit.toml` at its root, or whose `osaudit.toml` is not verified by [osaudit](https://github.com/ASSERT-KTH/osaudit), **fails the protocol and will not be endorsed**. No exemption, no grandfathering, no manual override: it applies to every new request and to every re-check of an existing one.
 
-**Why:** `osaudit` mechanically traces every number, quote and result of the paper to the evidence behind it. Conventions: <https://github.com/ASSERT-KTH/assert-research-agent/blob/main/CONVENTIONS.md>. Run `osaudit` in your repository before submitting.
+**What I need:** the open science repository contains an `osaudit.toml` at its root (that exact name; `audit.toml` is not accepted), and `osaudit` exits with status 0 on it (static checks). I run this step myself.
+
+**Why:** `osaudit` mechanically traces every number, quote and result of the paper to the evidence behind it. Conventions: <https://github.com/ASSERT-KTH/assert-research-agent/blob/main/CONVENTIONS.md>.
+
+**Before submitting:** run `osaudit` in your repository and fix every finding until it prints nothing.
 
 ---
 

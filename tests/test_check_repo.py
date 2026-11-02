@@ -273,5 +273,4 @@ def test_gate4_verdict_is_independent_of_gate5(fake_repo: Path, monkeypatch):
     assert result["osaudit"]["verdict"] is False          # gate 5: no osaudit.toml
     assert not check_repo.passes_all_repo_gates(result)
     assert "osaudit.toml" not in result["feedback"]       # gate 5 feedback stays out of gate 4
-    grandfathered = check_repo.check_repo("https://github.com/owner/repo", "paper text", fake_complete, osaudit=False)
-    assert check_repo.passes_all_repo_gates(grandfathered)
+    assert not check_repo.passes_all_repo_gates({"verdict": True})  # no exemption from gate 5

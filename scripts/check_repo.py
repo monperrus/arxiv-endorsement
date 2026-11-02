@@ -456,9 +456,8 @@ def check_repo(
     paper_text: str,
     complete,
     threshold: float = DEFAULT_TRACEABILITY_THRESHOLD,
-    osaudit: bool = True,
 ) -> dict:
-    """Run gate 4 (and gate 5 unless `osaudit` is False). `complete` maps an OpenAI-style payload to a response dict."""
+    """Run gates 4 and 5. `complete` maps an OpenAI-style payload to a response dict."""
     result: dict = {
         "repo_url": repo_url,
         "verdict": False,
@@ -493,8 +492,7 @@ def check_repo(
             result["summary"] = "The linked repository contains no files."
             return result
 
-        if osaudit:
-            result["osaudit"] = check_osaudit.check_osaudit(clone_dir)
+        result["osaudit"] = check_osaudit.check_osaudit(clone_dir)
 
         claims = parse_claims_response(complete(build_claims_payload(paper_text)))
         hits = scan_repo_for_values(clone_dir, claims)
@@ -552,8 +550,8 @@ def check_repo(
 
 
 def passes_all_repo_gates(repo_result: dict) -> bool:
-    """Gates 4 and 5 together; `verdict` alone is gate 4 (gate 5 is absent for grandfathered PRs)."""
-    return bool(repo_result["verdict"]) and repo_result.get("osaudit", {"verdict": True})["verdict"]
+    """Gates 4 and 5 together; `verdict` alone is gate 4 (a result without gate 5 never passes)."""
+    return bool(repo_result["verdict"]) and repo_result.get("osaudit", {"verdict": False})["verdict"]
 
 
 def render_gate4(result: dict) -> str:
