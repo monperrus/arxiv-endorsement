@@ -211,9 +211,9 @@ def normalize_repo_url(repo_url: str) -> str:
 
 
 def clone_repo(repo_url: str, dest: Path) -> tuple[bool, str]:
-    """Shallow-clone repo_url into dest. Returns (ok, message)."""
+    """Clone repo_url into dest, blobless so osaudit can see the provenance commit. Returns (ok, message)."""
     proc = subprocess.run(
-        ["git", "clone", "--depth", "1", "--quiet", normalize_repo_url(repo_url), str(dest)],
+        ["git", "clone", "--filter=blob:none", "--quiet", normalize_repo_url(repo_url), str(dest)],
         capture_output=True,
         text=True,
         timeout=CLONE_TIMEOUT,
