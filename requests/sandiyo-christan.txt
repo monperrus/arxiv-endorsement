@@ -1,5 +1,5 @@
 LinkedIn: https://www.linkedin.com/in/sandiyo-christan-bb3847198/
 Paper: https://github.com/zeb-labs/zeb-index/raw/main/paper/zeb_index_paper.pdf
 Repo: https://github.com/zeb-labs/zeb-index
-Subject: cs.AI
-EndorsementCode: TSKCGM
+Subject: cs.SE
+EndorsementCode: WQMR3H
