@@ -336,6 +336,10 @@ def build_comment(
         lines += ["", "<details><summary>Gate 4 detail — traceability of the paper's numbers</summary>", ""]
         lines.append(check_repo.render_gate4(repo_result))
         lines += ["</details>", ""]
+        if osa is not None and osa.get("findings"):
+            lines += ["<details open><summary>Gate 5 detail — osaudit findings</summary>", ""]
+            lines.append(check_repo.check_osaudit.render_gate5(osa))
+            lines += ["</details>", ""]
 
     lines += ["", result.get("summary", "")]
     if repo_result is not None and repo_result.get("summary"):

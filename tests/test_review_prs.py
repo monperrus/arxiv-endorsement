@@ -383,6 +383,21 @@ def test_build_comment_omits_commit_sha_when_absent():
     assert "@" not in comment
 
 
+def test_build_comment_lists_the_osaudit_findings():
+    """Regression (PR #64): the comment said '1 finding(s)' without saying which."""
+    result = _gate_result()
+    result["summary"] = ""
+    finding = "osaudit.toml:138: numbers/unused: derive 34 matches no number of the paper"
+    repo_result = {
+        "verdict": True, "confidence": "high",
+        "osaudit": {"verdict": False, "present": True, "feedback": "osaudit reports 1 finding(s).", "findings": [finding]},
+    }
+    comment = review_prs.build_comment(
+        result, "https://arxiv.org/abs/1", "https://github.com/owner/repo", "model", "checksum", repo_result,
+    )
+    assert f"`{finding}`" in comment
+
+
 def _answer(content: str, model: str = "m") -> str:
     import json as _json
     return _json.dumps({"best_effort": {"model": model}, "choices": [{"message": {"content": content}}]})
