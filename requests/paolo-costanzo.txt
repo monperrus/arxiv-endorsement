@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/paolocostanzoit/
+Paper: https://zenodo.org/records/23867645/files/main.pdf
+Repo: https://github.com/paolocostanzo/outside-the-prompt-lab
+Subject: cs.SE
+EndorsementCode: ZKJKA8
