@@ -244,6 +244,9 @@ def iter_repo_files(root: Path):
 
 
 def classify(rel: Path) -> str:
+    # CI definitions are not empirical results merely because they use YAML.
+    if rel.parts[:2] == (".github", "workflows"):
+        return "other"
     ext = rel.suffix.lower()
     if ext in PAPER_SOURCE_EXTS:
         return "paper_source"
@@ -335,18 +338,27 @@ def scan_repo_for_values(root: Path, claims: list[dict]) -> dict[str, list[dict]
     """Grep the working tree for every claimed value. Returns claim id -> hit list.
 
     Each list keeps at most MAX_EVIDENCE_FILES hits, data files first, then scripts,
-    then other files, then the paper source; path order within a kind.
+    then other files, then the paper source; path order within a kind. Once a list is
+    full of data and script hits, stop adding weaker evidence: even after sorting,
+    unrelated YAML workflow files would otherwise displace a later JSON results file.
     """
     compiled = [(c["id"], value_patterns(str(c.get("value", "")))) for c in claims]
     hits: dict[str, list[dict]] = {cid: [] for cid, _ in compiled}
 
     for path in iter_repo_files(root):
+        rel = path.relative_to(root)
+        kind = classify(rel)
+        pending = [
+            (cid, patterns) for cid, patterns in compiled
+            if sum(h["kind"] in {"data", "script"} for h in hits[cid]) < MAX_EVIDENCE_FILES
+            or kind in {"data", "script"}
+        ]
+        if not pending:
+            break
         text = read_text(path)
         if text is None:
             continue
-        rel = path.relative_to(root)
-        kind = classify(rel)
-        for cid, patterns in compiled:
+        for cid, patterns in pending:
             if any(p.search(text) for p in patterns):
                 hits[cid].append({"path": str(rel), "kind": kind})
 

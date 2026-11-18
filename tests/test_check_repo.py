@@ -68,6 +68,7 @@ def test_normalize_repo_url():
 
 def test_classify():
     assert check_repo.classify(Path("results/data.csv")) == "data"
+    assert check_repo.classify(Path(".github/workflows/results.yml")) == "other"
     assert check_repo.classify(Path("scripts/run.py")) == "script"
     assert check_repo.classify(Path("paper/main.tex")) == "paper_source"
     assert check_repo.classify(Path("logo.svg")) == "other"
@@ -99,8 +100,10 @@ def test_scan_finds_values_and_ignores_git(fake_repo: Path):
 
 
 def test_scan_keeps_data_files_when_a_common_value_is_everywhere(tmp_path: Path):
+    workflows = tmp_path / ".github" / "workflows"
+    workflows.mkdir(parents=True)
     for i in range(check_repo.MAX_EVIDENCE_FILES + 2):
-        (tmp_path / f"a_doc{i}.md").write_text("we ran 30 scenarios\n")
+        (workflows / f"workflow-{i}.yml").write_text("concurrency:\n  group: results-30\n")
     (tmp_path / "b_run.py").write_text("N = 30\n")
     (tmp_path / "z_numbers.csv").write_text("name,value\nHeldOut,30\n")
     hits = check_repo.scan_repo_for_values(tmp_path, [{"id": "C1", "value": "30"}])["C1"]
