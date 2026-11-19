@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/sean-maxwell-b04740438/
+Paper: https://rollsolo.app/research/pdfs/epistemic-guard-mcp-proxy.pdf
+Repo: https://github.com/AlienatedAliens/epistemic-guard
+Subject: cs.SE
+EndorsementCode: 8IB3H3
