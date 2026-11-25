@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/3dbarath/
+Paper: https://raw.githubusercontent.com/3DBarath/matrix_permanent_circuit_discovery/master/paper/main.pdf
+Repo: https://github.com/3DBarath/matrix_permanent_circuit_discovery
+Subject: cs.CC
+EndorsementCode: 9MBXLY
