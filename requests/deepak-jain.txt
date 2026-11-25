@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/deepak-jain-59b89b2a/
+Paper: https://zenodo.org/records/24372409
+Repo: https://github.com/deepakjain0812/safe-ir
+Subject: cs.SE
+EndorsementCode: ZVS4DQ
