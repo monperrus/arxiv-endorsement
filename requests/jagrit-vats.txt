@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/jagritvats/
+Paper: https://doi.org/10.5281/zenodo.24446419
+Repo: https://github.com/jagritvats/deltawal
+Subject: cs.SE
+EndorsementCode: BKEC4W
