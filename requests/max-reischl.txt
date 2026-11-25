@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/max-reischl-ab215a387
+Paper: https://raw.githubusercontent.com/Max6617/agent-cost-pitfalls/87f89a5ea15ca00e5323c9f7d5bb454a0b82e28d/paper/PAPER.pdf
+Repo: https://github.com/Max6617/agent-cost-pitfalls
+Subject: cs.SE
+EndorsementCode: LKHXKF
