@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/faazkhn
+Paper: https://github.com/faazkhn/Rapport/raw/main/papers/paper/paper.pdf
+Repo: https://github.com/faazkhn/Rapport
+Subject: cs.SE
+EndorsementCode: U4CTUF
