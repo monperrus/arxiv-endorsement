@@ -1,0 +1,5 @@
+LinkedIn: https://www.linkedin.com/in/ankit-kalluraya
+Paper: https://raw.githubusercontent.com/kallurayaankit/releaseradar-paper-artifact/32ce3e8169bb584dc0247c817aac01d98990b243/paper/ReleaseRadar_Feasibility_Preprint.pdf
+Repo: https://github.com/kallurayaankit/releaseradar-paper-artifact
+Subject: cs.SE
+EndorsementCode: DFGCPP
